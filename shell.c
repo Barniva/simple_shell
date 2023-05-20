@@ -5,11 +5,11 @@
  * 
  * return - always return 0
  */
-int main(int ac, char **av, char **env)
+int main(int ac, char **av, char **env __attribute((unused)))
 {
     if (ac == 1)
     {
-        prompt(av, env);
+        prompt(av);
     }
     return (0);
 }
