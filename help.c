@@ -5,31 +5,6 @@
 #include "shell.h"
 
 /**
- * cd - change current working directory
- * @args: array of strings
- * Return: status
- */
-int cd(char **args)
-{
-	int status;
-	char *pwd = NULL;
-
-	if (args[1] == NULL)
-	{
-		pwd = _getenv("HOME");
-		status = chdir(pwd);
-	}
-	else if (_strcmp(args[1], "-") == 0)
-	{
-		pwd = _getenv("OLDPWD");
-		status = chdir(pwd);
-	}
-	else
-		status = chdir(args[1]);
-	free(pwd);
-	return (status);
-}
-/**
  * help - print help
  * @args: array of strings
  * Return: status
@@ -68,48 +43,4 @@ int help(char **args)
 		print("Use man for other commands\n");
 	}
 	return (0);
-}
-/**
- * cexit - exits
- * @args: array of strings
- * Return: status
- */
-int cexit(char **args)
-{
-	int status;
-
-	if (args[1] == NULL)
-		status = errno;
-	else
-		status = _atoi(args[1]);
-
-	free_all(args);
-	exit(status);
-}
-/**
- * env - prints enviromental variables
- * @args: array of strings
- * Return: status
- */
-int env(char **args __attribute__((unused)))
-{
-	int i;
-
-	for (i = 0; __environ[i] != NULL; i++)
-	{
-		print(__environ[i]);
-		_putchar('\n');
-	}
-	return (0);
-}
-/**
- * printBuiltins - prints builtins
- * @b: builtin
- */
-void printBuiltins(builtin_t b)
-{
-	print(b.name);
-	print("\t: ");
-	print(b.desc);
-	print("\n");
 }
