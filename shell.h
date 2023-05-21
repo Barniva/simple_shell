@@ -49,7 +49,7 @@ int help(char **args);
 int cexit(char **args);
 int env(char **args);
 builtin_t *search_builtins(char *command, size_t *count);
-void print_builtin_info(builtin_t command);
+void printBuiltins(builtin_t command);
 
 /* Prompt and Tokenization */
 void prompt(char **argv);
