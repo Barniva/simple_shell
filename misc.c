@@ -8,6 +8,7 @@
  * @name: enviroment variable key
  * Return: status
  */
+
 char *_getenv(char *name)
 {
 	int i;
