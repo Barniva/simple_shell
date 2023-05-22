@@ -52,6 +52,7 @@ void prompt(char **argv)
  * @command: the command(string) to be tokenized
  * Return: token strings(array)
  */
+
 char **tokenize(char *command)
 {
 	char *DELIM = " \t\a\r";
