@@ -1,3 +1,5 @@
+#include "shell.h"
+
 /**
  * _strdup - returns a pointer to newly allocated space in
  * memory, which contains a copy of given string
