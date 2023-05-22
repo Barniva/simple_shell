@@ -6,6 +6,7 @@
  * @str: string
  * Return: array of character
  */
+
 char *_strdup(char *str)
 {
 	unsigned int i = 0, size = 0;
