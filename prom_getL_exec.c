@@ -18,8 +18,7 @@ void prompt(char **argv)
 	int status;
 
 	signal(SIGINT, SIG_IGN);
-	do
-	{
+	do {
 		fflush(NULL);
 		if (isatty(STDIN_FILENO))
 			printf(":) ");
@@ -47,7 +46,7 @@ void prompt(char **argv)
 		if (status != 0)
 			perror(argv[0]);
 		free(tokens);
-	}while(1);
+	} while (1);
 	if (lineptr != NULL)
 		free(lineptr);
 }
@@ -109,7 +108,7 @@ int execute(char **args)
 	};
 	builtin_count = sizeof(builtins) / sizeof(builtin_t);
 
-i	if (args == NULL || args[0] == NULL)
+	if (args == NULL || args[0] == NULL)
 		return (0);
 	for (i = (0); i < builtin_count; i++)
 	{
