@@ -53,6 +53,6 @@ void printBuiltins(builtin_t command);
 
 /* Prompt and Tokenization */
 void prompt(char **argv);
-char **tokenize(char *command);
+char **tokenize(const char *command);
 
 #endif /* _SHELL_H */

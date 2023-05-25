@@ -8,7 +8,7 @@
 
 /**
  * prompt - prompts user, gets what is typed on the line, executes it
- * @argv - command line arguments
+ * @argv: command line arguments
  */
 
 void prompt(char **argv)
@@ -51,63 +51,43 @@ void prompt(char **argv)
  * tokenize - split the command in to tokens
  * @command: the command(string) to be tokenized
  * Return: token strings(array)
- */
-
-char **tokenize(char *command)
+*/
+char **tokenize(const char *command)
 {
-	char *DELIM = " \t\a\r";
-	size_t position = 0, toke_size = INIT_TOKEN_SIZE, i;
-	char **tokens = malloc(toke_size * sizeof(char *)), *string, *token, **temp;
+	char **tokens = NULL;
+	char *token;
+	char *str = strdup(command);
+	const char *DELIM = " \t\a\r";
+	size_t position = 0;
+	size_t tokenArraySize = INIT_TOKEN_SIZE;
 
+	tokens = malloc(tokenArraySize * sizeof(char *));
 	if (tokens == NULL)
-		return (NULL);
-	string = strdup(command);
+	return (NULL);
 
-	if (string == NULL)
-	{
-		free(tokens);
-		return (NULL);
-	}
-
-	token = strtok(string, DELIM);
-
+	token = strtok(str, DELIM);
 	while (token != NULL)
 	{
-		tokens[position] = strdup(token);
-		if (tokens[position] == NULL)
+	tokens[position++] = strdup(token);
+	if (position >= tokenArraySize)
+	{
+		tokenArraySize += INIT_TOKEN_SIZE;
+		tokens = realloc(tokens, tokenArraySize * sizeof(char *));
+		if (tokens == NULL)
 		{
-			for (i = 0; i < position; i++)
-			{
-				free(tokens[i]);
-			}
-			free(tokens);
-			free(string);
-			return (NULL);
+		while (position > 0)
+			free(tokens[--position]);
+		free(tokens);
+		return (NULL);
 		}
-		position++;
-
-		if (position >= toke_size)
-		{
-			toke_size += INIT_TOKEN_SIZE;
-			temp = realloc(tokens, toke_size * sizeof(char *));
-
-			if (temp == NULL)
-			{
-				for (i = 0; i < position; i++)
-					free(tokens[i]);
-				free(tokens);
-				free(string);
-				return (NULL);
-			}
-			tokens = temp;
-		}
-		token = strtok(NULL, DELIM);
 	}
-
+	token = strtok(NULL, DELIM);
+	}
 	tokens[position] = NULL;
-	free(string);
+	free(str);
 	return (tokens);
 }
+
 /**
  * execute - execute a command
  * @args: array of strings
@@ -117,13 +97,14 @@ int execute(char **args)
 {
 	pid_t child_pid;
 	int status;
+	size_t i, builtin_count;
 	builtin_t builtins[] = {
 		{ "cd", "change current working directory: cd [<pathname>]", &cd },
 		{ "exit", "exits out of shell: exit [<status>]", &cexit},
 		{ "env", "prints environmental variables: env", &env  },
 		{ "help", "print information about builtins: help [<command>]", &help}
 		};
-		size_t i, builtin_count = sizeof(builtins) / sizeof(builtin_t);
+		builtin_count = sizeof(builtins) / sizeof(builtin_t);
 
 	if (args == NULL || args[0] == NULL)
 		return (0);
@@ -150,7 +131,7 @@ int execute(char **args)
 	else
 	{
 		/* Parent process*/
-		waitpid(child_pid, &status, WUNTRACED); /*Wait for the child process to terminate*/
+		waitpid(child_pid, &status, WUNTRACED); /*Wait child process to terminate*/
 		return (status); /*Return the status of the child process*/
 	}
 }
