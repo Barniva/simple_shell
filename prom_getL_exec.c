@@ -87,11 +87,10 @@ char **tokenize(const char *command)
 	free(str);
 	return (tokens);
 }
-
 /**
  * execute - execute a command
  * @args: array of strings
- * Return: status
+ * Return: always 0 on sucess
  */
 int execute(char **args)
 {
@@ -99,39 +98,34 @@ int execute(char **args)
 	int status;
 	size_t i, builtin_count;
 	builtin_t builtins[] = {
-		{ "cd", "change current working directory: cd [<pathname>]", &cd },
-		{ "exit", "exits out of shell: exit [<status>]", &cexit},
-		{ "env", "prints environmental variables: env", &env  },
-		{ "help", "print information about builtins: help [<command>]", &help}
-		};
-		builtin_count = sizeof(builtins) / sizeof(builtin_t);
+	{"cd", "change current working directory: cd [<pathname>]", &cd},
+	{"exit", "exits out of shell: exit [<status>]", &cexit},
+	{"env", "prints environmental variables: env", &env},
+	{"help", "print information about builtins: help [<command>]", &help}
+	};
+	builtin_count = sizeof(builtins) / sizeof(builtin_t);
 
 	if (args == NULL || args[0] == NULL)
 		return (0);
-
-	/* Search for built-in commands */
-	for (i = 0; i < builtin_count; i++)
+	for (i = (0); i < builtin_count; i++)
 	{
-		if (strcmp(args[0], builtins[i].name) == 0)
+		if (_strcmp(args[0], builtins[i].name) == 0)
 			return (builtins[i].func(args));
 	}
-
-	/*Execute external command*/
+	if (getpath(&args[0]) == NULL)
+		return (1);
 	child_pid = fork();
 	if (child_pid < 0)
 		return (1);
-
 	if (child_pid == 0)
 	{
-		/*Child process*/
-		signal(SIGINT, SIG_DFL); /*Set SIGINT signal handler to default*/
-		execvp(args[0], args); /*Execute the command*/
-		exit(1); /*If execvp fails, exit the child process*/
+		signal(SIGINT, SIG_DFL); /* Set SIGINT signal handler to default*/
+		if (execve(args[0], args, __environ) < 0)
+			return (0);
 	}
 	else
 	{
-		/* Parent process*/
-		waitpid(child_pid, &status, WUNTRACED); /*Wait child process to terminate*/
-		return (status); /*Return the status of the child process*/
+		wait(&status); /* Wait for the child process to finish*/
 	}
+	return (status); /*Return the status of the child process*/
 }

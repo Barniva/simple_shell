@@ -54,5 +54,6 @@ void printBuiltins(builtin_t command);
 /* Prompt and Tokenization */
 void prompt(char **argv);
 char **tokenize(const char *command);
+char *getpath(char **str);
 
 #endif /* _SHELL_H */
