@@ -17,10 +17,12 @@ void prompt(char **argv)
 	size_t n = 0, chars_read;
 	int status;
 
-	while (1)
+	signal(SIGINT, SIG_IGN);
+	do
 	{
+		fflush(NULL);
 		if (isatty(STDIN_FILENO))
-			printf("cisfun$ ");
+			printf(":) ");
 		/*read input from the user*/
 		chars_read = getline(&lineptr, &n, stdin);
 		/*check if the getline function reached Eof or function is failed*/
@@ -45,7 +47,9 @@ void prompt(char **argv)
 		if (status != 0)
 			perror(argv[0]);
 		free(tokens);
-	}
+	}while(1);
+	if (lineptr != NULL)
+		free(lineptr);
 }
 /**
  * tokenize - split the command in to tokens
@@ -105,11 +109,11 @@ int execute(char **args)
 	};
 	builtin_count = sizeof(builtins) / sizeof(builtin_t);
 
-	if (args == NULL || args[0] == NULL)
+i	if (args == NULL || args[0] == NULL)
 		return (0);
 	for (i = (0); i < builtin_count; i++)
 	{
-		if (_strcmp(args[0], builtins[i].name) == 0)
+		if (strcmp(args[0], builtins[i].name) == 0)
 			return (builtins[i].func(args));
 	}
 	if (getpath(&args[0]) == NULL)
@@ -121,7 +125,7 @@ int execute(char **args)
 	{
 		signal(SIGINT, SIG_DFL); /* Set SIGINT signal handler to default*/
 		if (execve(args[0], args, __environ) < 0)
-			return (0);
+			return (1);
 	}
 	else
 	{
